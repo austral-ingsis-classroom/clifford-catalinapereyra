@@ -1,7 +1,6 @@
 package edu.austral.ingsis;
 
 import edu.austral.ingsis.clifford.FileSystemState;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -7,5 +7,5 @@ sealed interface FileSystemNode permits Directory, File {
 
   String getType();
 
-  Instant getCreatedAt();//para ver si es directory o file
+  Instant getCreatedAt(); // para ver si es directory o file
 }

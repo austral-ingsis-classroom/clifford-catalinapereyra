@@ -1,14 +1,13 @@
 package edu.austral.ingsis.clifford;
 
 import java.time.Instant;
-import java.util.List;
 
 public final class File implements FileSystemNode {
   String name;
-  Directory parent; //para el cd..
+  Directory parent; // para el cd..
   private final Instant createdAt = Instant.now();
 
-  public File(String name, Directory parent){
+  public File(String name, Directory parent) {
     this.name = name;
     this.parent = parent;
   }
@@ -33,5 +32,5 @@ public final class File implements FileSystemNode {
   }
 }
 
-//los files se ordenan igual que los directories, porque en mi file system ambos estan mezclados
+// los files se ordenan igual que los directories, porque en mi file system ambos estan mezclados
 // adentro de la misma lista children y tienen el mismo “peso” a la hora de hacer ls
