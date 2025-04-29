@@ -1,5 +1,6 @@
 package edu.austral.ingsis.clifford;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +41,31 @@ public record Path(List<String> segments, boolean isAbsolute) {
   // agrega / al principio
   @Override
   public String toString() {
-    String joined = String.join("/", segments);
-    return isAbsolute ? "/" + joined : joined; // condición ? siEsVerdadero : siEsFalso
+    if (segments.isEmpty()) {
+      return "/";
+    }
+    return String.join("/", segments);
+  }
+
+  public Path append(Path other) {
+    if (other.isAbsolute) {
+      // Si el path que estamos agregando es absoluto, ignoramos el actual
+      return other;
+    }
+    List<String> newSegments = new ArrayList<>(this.segments);
+    newSegments.addAll(other.segments);
+    return new Path(newSegments, this.isAbsolute);
+  }
+
+  public Path normalize() {
+    List<String> result = new ArrayList<>();
+    for (String segment : segments) {
+      if (segment.equals("..")) {
+        if (!result.isEmpty()) result.remove(result.size() - 1);
+      } else if (!segment.equals(".")) {
+        result.add(segment);
+      }
+    }
+    return new Path(result, isAbsolute);
   }
 }

@@ -2,7 +2,7 @@ package edu.austral.ingsis.clifford;
 
 import java.time.Instant;
 
-sealed interface FileSystemNode permits Directory, File {
+public sealed interface FileSystemNode permits Directory, File {
   String getName();
 
   String getType();

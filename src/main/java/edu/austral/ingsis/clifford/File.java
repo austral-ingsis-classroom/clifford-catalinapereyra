@@ -5,11 +5,17 @@ import java.time.Instant;
 public final class File implements FileSystemNode {
   String name;
   Directory parent; // para el cd..
-  private final Instant createdAt = Instant.now();
+  private Instant createdAt = Instant.now();
 
   public File(String name, Directory parent) {
     this.name = name;
     this.parent = parent;
+  }
+
+  public File(String name, Directory parent, Instant createdAt) {
+    this.name = name;
+    this.parent = parent;
+    this.createdAt = createdAt;
   }
 
   @Override
