@@ -21,8 +21,8 @@ public class LsCommand implements Command {
       return new CommandResult(state, "invalid flag");
     }
 
-    Path normalizedPath = state.currentPath().normalize();
-    Optional<Directory> maybeCurrent = Directory.resolvePath(state.root(), normalizedPath);
+    Path normalizedPath = state.getCurrentPath().normalize();
+    Optional<Directory> maybeCurrent = Directory.resolvePath(state.getRoot(), normalizedPath);
     if (maybeCurrent.isEmpty()) return new CommandResult(state, "current directory not found");
 
     Directory current = maybeCurrent.get();

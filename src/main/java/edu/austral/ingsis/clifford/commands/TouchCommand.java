@@ -1,6 +1,7 @@
 package edu.austral.ingsis.clifford.commands;
 
 import edu.austral.ingsis.clifford.*;
+import java.time.Instant;
 import java.util.Optional;
 
 public class TouchCommand implements Command {
@@ -9,9 +10,9 @@ public class TouchCommand implements Command {
     if (args.length < 2) return new CommandResult(state, "invalid touch syntax");
 
     String name = args[1];
-    Path currentPath = state.currentPath().normalize();
+    Path currentPath = state.getCurrentPath().normalize();
 
-    Optional<Directory> maybeCurrent = Directory.resolvePath(state.root(), currentPath);
+    Optional<Directory> maybeCurrent = Directory.resolvePath(state.getRoot(), currentPath);
     if (maybeCurrent.isEmpty()) return new CommandResult(state, "current directory not found");
 
     Directory current = maybeCurrent.get();
@@ -20,9 +21,9 @@ public class TouchCommand implements Command {
       return new CommandResult(state, "'" + name + "' already exists");
     }
 
-    File newFile = new File(name, current);
+    File newFile = new File(name, Instant.now());
     Directory newCurrent = current.addChild(newFile);
-    Directory newRoot = state.root().replace(current, newCurrent);
+    Directory newRoot = state.getRoot().replace(current, newCurrent);
 
     return new CommandResult(
         new FileSystemState(newRoot, currentPath), "'" + name + "' file created");

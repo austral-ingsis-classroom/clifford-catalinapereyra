@@ -8,8 +8,8 @@ public class MkdirCommand implements Command {
   public CommandResult execute(String[] args, FileSystemState state) {
     if (args.length < 2) return new CommandResult(state, "invalid mkdir syntax");
 
-    Path currentPath = state.currentPath().normalize();
-    Optional<Directory> maybeCurrent = Directory.resolvePath(state.root(), currentPath);
+    Path currentPath = state.getCurrentPath().normalize();
+    Optional<Directory> maybeCurrent = Directory.resolvePath(state.getRoot(), currentPath);
 
     if (maybeCurrent.isEmpty()) return new CommandResult(state, "current directory not found");
 
@@ -22,7 +22,7 @@ public class MkdirCommand implements Command {
 
     Directory newChild = new Directory(name);
     Directory newCurrent = current.addChild(newChild);
-    Directory newRoot = state.root().replace(current, newCurrent);
+    Directory newRoot = state.getRoot().replace(current, newCurrent);
 
     return new CommandResult(
         new FileSystemState(newRoot, currentPath), "'" + name + "' directory created");

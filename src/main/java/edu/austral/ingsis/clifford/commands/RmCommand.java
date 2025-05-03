@@ -20,8 +20,8 @@ public class RmCommand implements Command {
       return new CommandResult(state, "invalid rm syntax");
     }
 
-    Path currentPath = state.currentPath().normalize();
-    Optional<Directory> maybeCurrent = Directory.resolvePath(state.root(), currentPath);
+    Path currentPath = state.getCurrentPath().normalize();
+    Optional<Directory> maybeCurrent = Directory.resolvePath(state.getRoot(), currentPath);
 
     if (maybeCurrent.isEmpty()) return new CommandResult(state, "current directory not found");
 
@@ -39,7 +39,7 @@ public class RmCommand implements Command {
     }
 
     Directory newCurrent = current.removeChild(name);
-    Directory newRoot = state.root().replace(current, newCurrent);
+    Directory newRoot = state.getRoot().replace(current, newCurrent);
 
     return new CommandResult(new FileSystemState(newRoot, currentPath), "'" + name + "' removed");
   }

@@ -4,33 +4,26 @@ import edu.austral.ingsis.clifford.*;
 import java.util.Optional;
 
 public class CdCommand implements Command {
+
   @Override
   public CommandResult execute(String[] args, FileSystemState state) {
-    if (args.length < 2) return new CommandResult(state, "invalid cd syntax");
+    if (args.length < 2) return new CommandResult(state, "cd: missing operand");
 
-    String pathStr = args[1];
-    Path path = Path.parse(pathStr);
-    Path newPath;
+    String rawPath = args[1];
+    Path inputPath = Path.parse(rawPath);
+    Path absolutePath =
+        inputPath.isAbsolute()
+            ? inputPath.normalize()
+            : state.getCurrentPath().append(inputPath).normalize();
 
-    if (path.isAbsolute()) {
-      newPath = path.normalize(); // Si el path es absoluto, normalizalo directo
-    } else {
-      newPath =
-          state
-              .currentPath()
-              .append(path)
-              .normalize(); // Si es relativo, lo agregás al actual y normalizás
+    Optional<Directory> maybeDir = Directory.resolvePath(state.getRoot(), absolutePath);
+
+    if (maybeDir.isEmpty()) {
+      return new CommandResult(state, "'" + rawPath + "' directory does not exist");
     }
 
-    Optional<Directory> maybeNewCurrent = Directory.resolvePath(state.root(), newPath);
-
-    if (maybeNewCurrent.isEmpty()) {
-      return new CommandResult(state, "'" + newPath.toString() + "' directory does not exist");
-    }
-
-    String displayPath = newPath.toString().isEmpty() ? "/" : newPath.toString();
-
+    Directory targetDir = maybeDir.get();
     return new CommandResult(
-        new FileSystemState(state.root(), newPath), "moved to directory '" + displayPath + "'");
+        state.moveTo(absolutePath), "moved to directory '" + targetDir.getName() + "'");
   }
 }

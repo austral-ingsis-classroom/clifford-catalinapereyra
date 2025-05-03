@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// segments: una lista con los pedacitos de la ruta, por ejemplo ["users", "cata", "files"]
-// isAbsolute: booleano que indica si la ruta empieza desde el root (/) o es relativa
 public record Path(List<String> segments, boolean isAbsolute) {
 
   // Este metood recibe un String raw, osea, la ruta escrita por el usuario (ej: /users/cata/files)
@@ -16,10 +14,7 @@ public record Path(List<String> segments, boolean isAbsolute) {
     if (raw == null || raw.isBlank()) return new Path(List.of(), false);
 
     String trimmed = raw.trim(); // borra los espacios en blanco al inicio y al final de un string
-    boolean isAbsolute =
-        trimmed.startsWith(
-            "/"); // Verifica si la ruta empieza con /, lo cual indica que es absoluta (desde la
-    // raíz). "/users/cata" → true
+    boolean isAbsolute = trimmed.startsWith("/");
 
     // eliminar "/" inicial y final -> pq no quiero que los extremos vacios te generen segmentos
     // vacios despues
@@ -41,15 +36,12 @@ public record Path(List<String> segments, boolean isAbsolute) {
   // agrega / al principio
   @Override
   public String toString() {
-    if (segments.isEmpty()) {
-      return "/";
-    }
-    return String.join("/", segments);
+    if (segments.isEmpty()) return "/";
+    return (isAbsolute ? "/" : "") + String.join("/", segments);
   }
 
   public Path append(Path other) {
     if (other.isAbsolute) {
-      // Si el path que estamos agregando es absoluto, ignoramos el actual
       return other;
     }
     List<String> newSegments = new ArrayList<>(this.segments);
@@ -67,5 +59,20 @@ public record Path(List<String> segments, boolean isAbsolute) {
       }
     }
     return new Path(result, isAbsolute);
+  }
+
+  public static Path root() {
+    return new Path(List.of(), true);
+  }
+
+  public Path parent() {
+    if (segments.isEmpty()) return this;
+    List<String> newSegments = new ArrayList<>(segments);
+    newSegments.remove(newSegments.size() - 1);
+    return new Path(newSegments, isAbsolute);
+  }
+
+  public boolean isEmpty() {
+    return segments.isEmpty();
   }
 }
